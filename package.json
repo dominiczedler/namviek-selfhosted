@@ -7,8 +7,8 @@
   },
   "scripts": {
     "vercel-build": "next build",
-    "compose-build": "docker compose -f docker-compose.yml -f docker-compose.services.yml build",
-    "compose-up": "docker compose -f docker-compose.yml -f docker-compose.services.yml up",
+    "compose-build": "docker compose -f docker-compose.yml build",
+    "compose-up": "docker compose -f docker-compose.yml up",
     "frontend": "nx serve frontend",
     "backend": "nx serve backend",
     "scheduler": "nx serve task-runner",
