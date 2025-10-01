@@ -47,10 +47,10 @@ services:
       context: .
       dockerfile: ./docker/backend/Dockerfile
       args:
-        - ENV_FILE=.env.local
+        - ENV_FILE=.env
     image: namviek
     env_file:
-      - .env.local
+      - .env
     environment:
       - REDIS_HOST=redis:6379
       - MONGODB_URL=mongodb://mongodb:27017/namviek?replicaSet=rs0&authSource=admin&directConnection=true
@@ -76,7 +76,7 @@ services:
       context: .
       dockerfile: ./docker/frontend/Dockerfile
     env_file:
-      - .env.local
+      - .env
     ports:
       - '3005:3000'
     command: /bin/sh -c 'HOSTNAME="0.0.0.0" node ./apps/frontend/server.js'
