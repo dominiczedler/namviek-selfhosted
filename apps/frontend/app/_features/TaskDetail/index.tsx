@@ -2,7 +2,7 @@ import { Button, DatePicker, Form, Tab, messageWarning } from '@ui-components'
 import MemberPicker from '@/components/MemberPicker'
 import PrioritySelect from '@/components/PrioritySelect'
 import StatusSelect from '@/components/StatusSelect'
-import { TaskPriority, TaskStatus, TaskType } from '@prisma/client'
+import { TaskPriority, TaskStatus, TaskType, FieldType, Prisma } from '@prisma/client'
 import { useFormik } from 'formik'
 import { validateTask } from '@namviek/core/validation'
 import { useParams } from 'next/navigation'
@@ -21,6 +21,7 @@ import {
   HiOutlineSquare2Stack,
   HiOutlineUser
 } from 'react-icons/hi2'
+import { MdOutlineViewColumn } from 'react-icons/md'
 import './style.css'
 import TaskCover from './TaskCover'
 import TaskComments from '../TaskComments'
@@ -32,6 +33,11 @@ import MultiMemberPicker from '@/components/MultiMemberPicker'
 import TimeTracker from '@/features/TimeTracker'
 import TimerHistory from '../TimeTracker/TimerHistory'
 import TimerButton from '../TimeTracker/TimerButton'
+import { useProjectCustomFieldStore } from '@/store/customFields'
+import { useTaskStore } from '@/store/task'
+import CustomFieldInputFactory from '@/features/CustomFieldInput/CustomFieldInputFactory'
+import CustomFieldInputProvider from '@/features/CustomFieldInput/CustomFieldInputProvider'
+import { useTaskUpdate } from '@/components/DataFetcher/useTaskUpdate'
 
 export const defaultFormikValues: ITaskDefaultValues = {
   title: '',
@@ -320,6 +326,7 @@ export default function TaskDetail({
               />
             </div>
           </div>
+          <CustomFieldsSection taskId={id} />
           <div className="flex flex-col items-start pt-2">
             <div className="task-info-label">
               <HiOutlineClock /> <span>Time Tracking</span>
@@ -371,5 +378,81 @@ export default function TaskDetail({
         </section>
       </div>
     </form>
+  )
+}
+
+function CustomFieldsSection({ taskId }: { taskId: string }) {
+  const customFields = useProjectCustomFieldStore(state => state.customFields)
+  const { tasks } = useTaskStore()
+  const { updateOneField } = useTaskUpdate()
+
+  const task = tasks.find(t => t.id === taskId)
+  const taskCustomData = task?.customFields
+  const customData = (taskCustomData || {}) as Prisma.JsonObject
+
+  // Don't show section if no custom fields
+  if (!customFields || customFields.length === 0) {
+    return null
+  }
+
+  const getFixedValue = (type: FieldType, defaultData: string) => {
+    if (!task) return defaultData
+
+    switch (type) {
+      case FieldType.CREATED_BY:
+        return task.createdBy || ''
+      case FieldType.CREATED_AT:
+        return task.createdAt ? task.createdAt.toString() : ''
+      case FieldType.UPDATED_AT:
+        return task.updatedAt ? task.updatedAt.toString() : ''
+      case FieldType.UPDATED_BY:
+        return task.updatedBy || ''
+      default:
+        return defaultData
+    }
+  }
+
+  return (
+    <div className="flex flex-col items-start pt-2">
+      <div className="task-info-label">
+        <MdOutlineViewColumn /> <span>Custom Fields</span>
+      </div>
+      <div className="task-info-content w-full mt-4">
+        <div className="space-y-3">
+          {customFields.map((field) => {
+            const { id, name, type } = field
+            const data = JSON.stringify(field.data)
+            const config = JSON.stringify(field.config)
+            const dataValue = customData[id]
+            const dataStrValue = getFixedValue(type, dataValue ? (dataValue + '') : '')
+
+            return (
+              <div key={id} className="grid grid-cols-[200px_1fr] gap-4 items-center border-b dark:border-gray-700 pb-3">
+                <div className="font-medium text-sm text-gray-700 dark:text-gray-300">
+                  {name}
+                </div>
+                <div>
+                  <CustomFieldInputProvider onChange={(value) => {
+                    updateOneField({
+                      taskId,
+                      value,
+                      fieldId: id,
+                      type
+                    })
+                  }}>
+                    <CustomFieldInputFactory
+                      rowId={taskId}
+                      data={data}
+                      config={config}
+                      type={type}
+                      value={dataStrValue} />
+                  </CustomFieldInputProvider>
+                </div>
+              </div>
+            )
+          })}
+        </div>
+      </div>
+    </div>
   )
 }
