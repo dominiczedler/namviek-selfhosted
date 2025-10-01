@@ -6,7 +6,6 @@
     "seed": "ts-node ./packages/database/src/prisma/seed"
   },
   "scripts": {
-    "vercel-build": "next build",
     "compose-build": "docker compose -f docker-compose.yml build",
     "compose-up": "docker compose -f docker-compose.yml up",
     "frontend": "nx serve frontend",
