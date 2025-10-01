@@ -7,7 +7,6 @@ import {
   HiOutlineBriefcase,
   HiOutlineChartPie,
   HiOutlineServerStack,
-  HiOutlineVideoCamera,
 } from 'react-icons/hi2'
 import { Button, Scrollbar } from '@ui-components'
 import { AiOutlinePlus } from 'react-icons/ai'
@@ -61,12 +60,6 @@ function ProjectNavListContainer({ orgName }: { orgName: string }) {
       icon: HiOutlineServerStack,
       active: pathname.includes('/project/') || pathname.includes('/project'),
       children: ProjectList
-    },
-    {
-      title: 'Meeting',
-      href: `/${orgName}/meeting`,
-      icon: HiOutlineVideoCamera,
-      active: pathname.includes('/meeting')
     },
     // {
     //   title: 'Favorites',

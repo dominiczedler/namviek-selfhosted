@@ -10,7 +10,6 @@ import reportRouter from './report'
 import visionRouter from './vision'
 import { storageRouter } from './storage'
 import buzzerRouter from './buzzer'
-import meetingRouter from './meeting'
 import { authMiddleware } from '../middlewares'
 import ActivityRouter from './activity'
 import CommentRouer from './comment'
@@ -87,7 +86,6 @@ router.use(
 )
 // middlewares
 // router.use([])
-router.use(meetingRouter)
 router.use(buzzerRouter)
 router.use('/storage', [authMiddleware, storageRouter])
 router.use(visionRouter)
