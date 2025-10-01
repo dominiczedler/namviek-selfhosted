@@ -2,16 +2,16 @@ import { Button, messageSuccess } from "@ui-components";
 import { useCheckboxStore } from "../CustomFieldCheckbox/useCheckboxStore";
 import MultiActionInpDisplay from "./MultiActionInpDisplay";
 import { useState } from "react";
-import { FieldType } from "@prisma/client";
+import { FieldType, Prisma } from "@prisma/client";
 import { projectGridSv } from "@/services/project.grid";
-import { useDataFetcher } from "@/components/DataFetcher/useDataFetcher";
+import { useTaskStore } from "@/store/task";
 // Define type for field values
 type FieldValues = {
   [fieldId: string]: { value: string, type: FieldType }
 }
 
 export default function CustomFieldMultiAction() {
-  const { updateCustomFields } = useDataFetcher()
+  const { tasks, updateTask } = useTaskStore()
   const clear = useCheckboxStore(state => state.clear)
   const [fieldValues, setFieldValues] = useState<FieldValues>({})
   const { display, length, ids } = useCheckboxStore(state => {
@@ -45,18 +45,26 @@ export default function CustomFieldMultiAction() {
   }
 
   const handleUpdate = () => {
-    // Here you can access fieldValues and selected ids to perform the update
-    console.log('Updating with values:', fieldValues, ids)
+    // Update tasks in local store
+    ids.forEach(taskId => {
+      const task = tasks.find(t => t.id === taskId)
+      if (task) {
+        const updatedCustomFields = { ...(task.customFields as Prisma.JsonObject || {}) }
+        Object.entries(fieldValues).forEach(([fieldId, fieldData]) => {
+          updatedCustomFields[fieldId] = fieldData.value
+        })
+        updateTask({ id: taskId, customFields: updatedCustomFields })
+      }
+    })
 
-    updateCustomFields(ids, fieldValues)
     setFieldValues({})
     clear()
 
+    // Update on server
     projectGridSv.updateMany(ids, fieldValues).then(res => {
-      console.log('respomd', res)
+      console.log('response', res)
       messageSuccess('Multiple update successfully')
     })
-    // Add your update logic here
   }
 
   if (!display) return null

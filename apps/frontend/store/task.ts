@@ -215,7 +215,8 @@ export const useTaskStore = create<TaskState>(set => ({
           dueDate,
           visionId,
           updatedBy,
-          progress
+          progress,
+          customFields
         } = data
 
         if (!id) return
@@ -274,6 +275,10 @@ export const useTaskStore = create<TaskState>(set => ({
 
         if (progress) {
           task.progress = progress
+        }
+
+        if (customFields !== undefined) {
+          task.customFields = customFields
         }
 
         if (fileIds) {

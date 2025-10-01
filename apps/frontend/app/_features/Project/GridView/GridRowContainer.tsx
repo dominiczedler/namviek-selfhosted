@@ -3,7 +3,6 @@ import './grid-style.css'
 import CreateNewRow from "./CreateNewRow";
 import GridHeadingRow from "./GridHeadingRow";
 import GridContentRow from "./GridContentRow";
-import GridLoadMore from "./GridLoadMore";
 
 
 export default function GridRowContainer({ tasks }: {
@@ -17,7 +16,6 @@ export default function GridRowContainer({ tasks }: {
         return <GridContentRow task={task} key={task.id} />
       })}
       <CreateNewRow />
-      <GridLoadMore />
     </div>
 
   </div>

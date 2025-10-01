@@ -1,30 +1,21 @@
 'use client'
 
-import { useDataFetcher } from '@/components/DataFetcher/useDataFetcher'
+import { useTaskStore } from '@/store/task'
 import CustomFieldMultiAction from '@/features/CustomFieldMultiAction'
-import GridDataFilter from './GridDataFilter'
 import GridRowContainer from './GridRowContainer'
+import useTaskFilterContext from '@/features/TaskFilter/useTaskFilterContext'
 
 export default function GridViewContainer() {
+  const { tasks } = useTaskStore()
+  const { groupByItems } = useTaskFilterContext()
 
   return (
-
     <div className="pb-[300px]">
-      <GridDataFilter>
-        <div className="divide-y dark:divide-gray-800">
-          <TaskData />
-        </div>
-        <CustomFieldMultiAction />
-      </GridDataFilter>
+      <div className="divide-y dark:divide-gray-800">
+        <GridRowContainer tasks={tasks} />
+      </div>
+      <CustomFieldMultiAction />
     </div>
-
-  )
-}
-
-function TaskData() {
-  const data = useDataFetcher(state => state.data)
-  return (
-    <GridRowContainer tasks={data} />
   )
 }
 

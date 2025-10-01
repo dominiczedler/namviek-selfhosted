@@ -1,11 +1,11 @@
-import { useDataFetcher } from "./useDataFetcher"
+import { useTaskStore } from "@/store/task"
 import { messageSuccess } from "@ui-components"
 import { projectGridSv } from "@/services/project.grid"
-import { FieldType } from "@prisma/client"
+import { FieldType, Prisma } from "@prisma/client"
 import { useUser } from "@auth-client"
 
 export const useTaskUpdate = () => {
-  const { setData } = useDataFetcher()
+  const { tasks, updateTask } = useTaskStore()
   const { user } = useUser()
 
   const updateOneField = ({ taskId, value, fieldId, type }: {
@@ -14,18 +14,21 @@ export const useTaskUpdate = () => {
     fieldId: string,
     type: FieldType
   }) => {
+    // Find task and update its custom fields
+    const task = tasks.find(t => t.id === taskId)
+    if (task) {
+      const updatedCustomFields = { ...(task.customFields as Prisma.JsonObject || {}) }
+      updatedCustomFields[fieldId] = value
 
-    setData(prevData => prevData.map(dt => {
-      if (dt.id === taskId) {
-        return {
-          ...dt,
-          updatedAt: new Date(),
-          updatedBy: user?.id || ''
-        }
-      }
-      return dt
-    }))
+      updateTask({
+        id: taskId,
+        customFields: updatedCustomFields,
+        updatedAt: new Date(),
+        updatedBy: user?.id || ''
+      })
+    }
 
+    // Update on server
     projectGridSv.update({
       taskId,
       type,
@@ -35,7 +38,7 @@ export const useTaskUpdate = () => {
       const { data, status } = res.data
       console.log('returned data:', data, status)
       if (status !== 200) return
-      messageSuccess('Update field value sucecss')
+      messageSuccess('Update field value success')
     })
   }
 

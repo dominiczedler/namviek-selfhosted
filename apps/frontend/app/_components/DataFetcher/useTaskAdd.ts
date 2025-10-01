@@ -1,11 +1,11 @@
-import { useDataFetcher } from "./useDataFetcher"
+import { useTaskStore } from "@/store/task"
 import { randomId } from "@ui-components"
 import { useParams } from "next/navigation"
 import { ExtendedTask } from "@/store/task"
 import { projectGridSv } from "@/services/project.grid"
 
 export const useTaskAdd = () => {
-  const { setData } = useDataFetcher()
+  const { addOneTask, updateTask } = useTaskStore()
   const { projectId } = useParams()
 
   const addNewRow = (data?: Partial<ExtendedTask>) => {
@@ -13,27 +13,22 @@ export const useTaskAdd = () => {
     const insertedData = {
       id,
       title: '',
-      projectId,
-      customFields: {}
+      projectId: projectId as string,
+      customFields: {},
+      selected: false
     } as ExtendedTask
 
-    setData(prevData => {
-      return [
-        ...prevData,
-        insertedData
-      ]
-    })
+    // Add to local store immediately
+    addOneTask(insertedData)
 
+    // Create on server
     projectGridSv.create(insertedData).then(res => {
       console.log(res)
       const { data, status } = res.data
       if (status !== 200) return
 
-      setData(prevData => prevData.map(dt => {
-        if (dt.id === id) return data
-        return dt
-      }))
-
+      // Update local store with server response
+      updateTask(data)
     })
   }
 
