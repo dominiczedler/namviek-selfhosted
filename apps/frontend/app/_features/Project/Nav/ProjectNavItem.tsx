@@ -51,7 +51,6 @@ export default function ProjectNavItem({
     if (!pathName.includes(p)) {
       // setProjectViewLoading(true)
     }
-    addAllTasks([])
 
     onSelectProject(id)
     setMenuVisible(false)
