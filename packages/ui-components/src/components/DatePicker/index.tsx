@@ -15,6 +15,7 @@ export interface IDatePicker {
   onChange?: (d: Date) => void
   placeholder?: string
   toNow?: boolean
+  showIcon?: boolean
 }
 
 export default function DatePicker({
@@ -26,7 +27,8 @@ export default function DatePicker({
   value,
   onChange,
   toNow = false,
-  placeholder
+  placeholder,
+  showIcon = false
 }: IDatePicker) {
   const [selected, setSelected] = useState<Date>()
   const [visible, setVisible] = useState(false)
@@ -132,7 +134,7 @@ export default function DatePicker({
           <Popover.Trigger asChild>
             <div>
               <div
-                className="form-input cursor-pointer whitespace-nowrap pl-9"
+                className={`form-input cursor-pointer whitespace-nowrap ${showIcon ? 'pl-9' : ''}`}
                 tabIndex={-1}>
                 {selected && isValid(selected) ? (
                   <>
@@ -145,19 +147,21 @@ export default function DatePicker({
                   <span className="text-transparent">Empty</span>
                 )}
               </div>
-              {selected && isValid(selected) ? (
-                <img
-                  src="/icons/calendar-day.svg"
-                  alt="Calendar"
-                  className="absolute top-1/2 -translate-y-1/2 left-2.5 w-5 h-5"
-                />
-              ) : (
-                <img
-                  src="/icons/calendar-add.svg"
-                  alt="Add date"
-                  className="absolute top-1/2 -translate-y-1/2 left-2.5 w-5 h-5 opacity-40"
-                />
-              )}
+              {showIcon ? (
+                selected && isValid(selected) ? (
+                  <img
+                    src="/icons/calendar-day.svg"
+                    alt="Calendar"
+                    className="absolute top-1/2 -translate-y-1/2 left-2.5 w-5 h-5"
+                  />
+                ) : (
+                  <img
+                    src="/icons/calendar-add.svg"
+                    alt="Add date"
+                    className="absolute top-1/2 -translate-y-1/2 left-2.5 w-5 h-5 opacity-40"
+                  />
+                )
+              ) : null}
             </div>
           </Popover.Trigger>
           <Popover.Portal>

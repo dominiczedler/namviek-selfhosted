@@ -11,7 +11,6 @@ import { StatusType } from '@prisma/client'
 
 import TaskTypeIcon from '@/components/TaskTypeSelect/Icon'
 import TaskDate from '../views/TaskDate'
-import { HiOutlineCalendar } from 'react-icons/hi2'
 import TaskAssignee from '../views/TaskAssignee'
 import TaskCheckbox from '@/components/TaskCheckbox'
 import { GoTasklist } from 'react-icons/go'
@@ -78,7 +77,11 @@ export default function BoardItem({ data }: { data: ExtendedTask }) {
         <TaskTypeIcon size="sm" type={data.type || ''} />
       </h2>
       <div className="board-item-duedate">
-        <HiOutlineCalendar className="w-3 h-3" />
+        <img
+          src="/icons/calendar-day.svg"
+          alt="Calendar"
+          className="w-3 h-3 opacity-60"
+        />
         <TaskDate
           taskId={data.id}
           toNow={true}

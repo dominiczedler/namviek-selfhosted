@@ -263,7 +263,7 @@ export default function TaskDetail({
             <div className="task-info-content">
               <div className="flex items-center gap-2">
                 <DatePicker
-                  enableTimer={true}
+                  showIcon={true}
                   placeholder="Start"
                   value={formik.values.startDate}
                   onChange={d => {
@@ -272,7 +272,7 @@ export default function TaskDetail({
                 />
                 <HiArrowLongRight className={`w-5 h-5 ${formik.values.startDate ? '' : 'text-gray-400'}`} />
                 <DatePicker
-                  enableTimer={true}
+                  showIcon={true}
                   placeholder="Due"
                   value={formik.values.dueDate}
                   onChange={d => {
