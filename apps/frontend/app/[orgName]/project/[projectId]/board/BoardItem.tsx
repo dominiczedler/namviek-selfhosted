@@ -4,14 +4,20 @@ import { useParams, useRouter } from 'next/navigation'
 import { useUrl } from '@/hooks/useUrl'
 import PriorityText from '@/components/PriorityText'
 import { Loading, Popover, Tooltip, messageWarning } from '@ui-components'
+import * as PopoverPrimitive from '@radix-ui/react-popover'
+import { DayPicker } from 'react-day-picker'
+import 'react-day-picker/dist/style.css'
 
 import differenceInDays from 'date-fns/differenceInDays'
+import { format, isToday, isTomorrow, isWithinInterval, subDays } from 'date-fns'
 import { useStatusUtils } from '@/hooks/useStatusUtils'
 import { StatusType } from '@prisma/client'
 
 import TaskTypeIcon from '@/components/TaskTypeSelect/Icon'
 import TaskDate from '../views/TaskDate'
 import TaskAssignee from '../views/TaskAssignee'
+import { useTaskUpdate } from '../views/useTaskUpdate'
+import { useState } from 'react'
 import TaskCheckbox from '@/components/TaskCheckbox'
 import { GoTasklist } from 'react-icons/go'
 import { HiListBullet } from 'react-icons/hi2'
@@ -31,11 +37,11 @@ function BoardItemCover({ cover }: { cover: string | null }) {
 }
 
 export default function BoardItem({ data }: { data: ExtendedTask }) {
-  // const { orgID, projectId } = useParams()
-  // const { replace } = useRouter()
   const { getStatusTypeByTaskId } = useStatusUtils()
-  // const { getSp } = useUrl()
-  // const link = `${orgID}/project/${projectId}?mode=${getSp('mode')}&taskId=${data.id}`
+  const { updateTaskData } = useTaskUpdate()
+  const [dateValue, setDateValue] = useState(data.dueDate ? new Date(data.dueDate) : null)
+  const [datePickerOpen, setDatePickerOpen] = useState(false)
+
   const progress = useMemo(() => {
     const done = data.checklistDone || 0
     const todo = data.checklistTodos || 0
@@ -61,8 +67,51 @@ export default function BoardItem({ data }: { data: ExtendedTask }) {
     taskStatusType !== StatusType.DONE &&
     differenceInDays(new Date(dueDate), new Date()) < 0
 
-  if (isOverdue) {
-    dateClasses.push('text-red-400')
+  const getDateDisplay = (date: Date | null) => {
+    if (!date) return null
+
+    const dateObj = new Date(date)
+    const now = new Date()
+    const daysDiff = differenceInDays(dateObj, now)
+
+    // Today
+    if (isToday(dateObj)) {
+      return { text: 'Today', color: 'text-yellow-600 dark:text-yellow-500 bg-yellow-50 dark:bg-yellow-900/20 border-yellow-200 dark:border-yellow-800' }
+    }
+
+    // Tomorrow
+    if (isTomorrow(dateObj)) {
+      return { text: 'Tomorrow', color: 'text-gray-600 dark:text-gray-400 bg-gray-50 dark:bg-gray-800 border-gray-200 dark:border-gray-700' }
+    }
+
+    // Overdue
+    if (daysDiff < 0) {
+      const daysAgo = Math.abs(daysDiff)
+      if (daysAgo < 7) {
+        return { text: `${daysAgo} day${daysAgo === 1 ? '' : 's'} ago`, color: 'text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-900/20 border-red-200 dark:border-red-800' }
+      }
+      return { text: format(dateObj, 'MMM d'), color: 'text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-900/20 border-red-200 dark:border-red-800' }
+    }
+
+    // Future within 7 days - show weekday
+    if (daysDiff < 7) {
+      return { text: format(dateObj, 'EEEE'), color: 'text-gray-600 dark:text-gray-400 bg-gray-50 dark:bg-gray-800 border-gray-200 dark:border-gray-700' }
+    }
+
+    // Future beyond 7 days - show date
+    return { text: format(dateObj, 'MMM d'), color: 'text-gray-600 dark:text-gray-400 bg-gray-50 dark:bg-gray-800 border-gray-200 dark:border-gray-700' }
+  }
+
+  const dateDisplay = dueDate ? getDateDisplay(new Date(dueDate)) : null
+
+  const onDateUpdate = (date: Date | undefined) => {
+    if (!date) return
+    setDateValue(date)
+    setDatePickerOpen(false)
+    updateTaskData({
+      id: data.id,
+      dueDate: date
+    })
   }
 
   return (
@@ -77,18 +126,36 @@ export default function BoardItem({ data }: { data: ExtendedTask }) {
         <span>{data.title}</span>
         <TaskTypeIcon size="sm" type={data.type || ''} />
       </h2>
-      <div className="board-item-duedate">
-        <img
-          src="/icons/calendar-day.svg"
-          alt="Calendar"
-          className="w-3 h-3 opacity-60"
-        />
-        <TaskDate
-          taskId={data.id}
-          toNow={true}
-          date={data.dueDate ? new Date(data.dueDate) : null}
-        />
-      </div>
+      {dateDisplay && (
+        <PopoverPrimitive.Root open={datePickerOpen} onOpenChange={setDatePickerOpen}>
+          <PopoverPrimitive.Trigger asChild>
+            <div className={`inline-flex items-center gap-1.5 px-2 py-1 rounded-md border text-xs font-medium transition-colors hover:bg-opacity-80 cursor-pointer ${dateDisplay.color}`}>
+              <img
+                src="/icons/calendar-day.svg"
+                alt="Calendar"
+                className="w-3 h-3 opacity-60"
+              />
+              <span>{dateDisplay.text}</span>
+            </div>
+          </PopoverPrimitive.Trigger>
+          <PopoverPrimitive.Portal>
+            <PopoverPrimitive.Content sideOffset={4} className="popover-content">
+              <DayPicker
+                mode="single"
+                selected={dateValue || undefined}
+                onSelect={onDateUpdate}
+                showOutsideDays
+                fixedWeeks
+                captionLayout="dropdown-buttons"
+                fromYear={1900}
+                toYear={2100}
+                numberOfMonths={1}
+                defaultMonth={dateValue || new Date()}
+              />
+            </PopoverPrimitive.Content>
+          </PopoverPrimitive.Portal>
+        </PopoverPrimitive.Root>
+      )}
 
       <div className="board-item-action">
         <div className="flex items-center gap-2">
