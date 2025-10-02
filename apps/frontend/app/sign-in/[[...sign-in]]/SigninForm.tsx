@@ -142,7 +142,7 @@ export default function SigninForm() {
             <p className="text-[16px] md:text-[19px] mt-4 md:mt-6 text-[#7A8799]">Select your preferred sign-in method to jump right back into your projects.</p>
 
             <div className="flex flex-col gap-4 mt-6 md:mt-7">
-              <button onClick={ev => {
+              <button type="button" onClick={ev => {
                 ev.preventDefault()
                 signInWithThirdParty()
               }} className='border bg-white hover:bg-zinc-50 shadow border-[#D0D5E1] rounded-lg text-base text-zinc-600 w-full flex items-center justify-center py-2.5 active:shadow-inner transition-all'>
