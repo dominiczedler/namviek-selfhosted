@@ -27,7 +27,7 @@ export const defaultFormikValues: ITaskDefaultValues = {
   plannedDueDate: undefined,
   planedStartDate: undefined,
   progress: 0,
-  desc: '<p>Tell me what this task about 🤡</p>'
+  desc: ''
 }
 
 export interface ITaskDefaultValues {

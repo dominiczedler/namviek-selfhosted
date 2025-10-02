@@ -2,7 +2,6 @@ import { format, formatDistanceToNowStrict, isValid } from 'date-fns'
 import * as Popover from '@radix-ui/react-popover'
 import { ChangeEvent, useEffect, useState } from 'react'
 import { DayPicker, SelectSingleEventHandler } from 'react-day-picker'
-import { AiOutlineCalendar } from 'react-icons/ai'
 import 'react-day-picker/dist/style.css'
 import './style.css'
 
@@ -133,7 +132,7 @@ export default function DatePicker({
           <Popover.Trigger asChild>
             <div>
               <div
-                className="form-input cursor-pointer whitespace-nowrap pr-8"
+                className="form-input cursor-pointer whitespace-nowrap pl-9"
                 tabIndex={-1}>
                 {selected && isValid(selected) ? (
                   <>
@@ -146,7 +145,19 @@ export default function DatePicker({
                   <span className="text-transparent">Empty</span>
                 )}
               </div>
-              <AiOutlineCalendar className="absolute top-1/2 -translate-y-1/2 right-2.5 text-gray-400" />
+              {selected && isValid(selected) ? (
+                <img
+                  src="/icons/calendar-day.svg"
+                  alt="Calendar"
+                  className="absolute top-1/2 -translate-y-1/2 left-2.5 w-5 h-5"
+                />
+              ) : (
+                <img
+                  src="/icons/calendar-add.svg"
+                  alt="Add date"
+                  className="absolute top-1/2 -translate-y-1/2 left-2.5 w-5 h-5 opacity-40"
+                />
+              )}
             </div>
           </Popover.Trigger>
           <Popover.Portal>

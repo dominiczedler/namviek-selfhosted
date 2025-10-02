@@ -19,7 +19,8 @@ import {
   HiOutlineMap,
   HiOutlinePaperClip,
   HiOutlineSquare2Stack,
-  HiOutlineUser
+  HiOutlineUser,
+  HiArrowLongRight
 } from 'react-icons/hi2'
 import { MdOutlineViewColumn } from 'react-icons/md'
 import './style.css'
@@ -52,7 +53,7 @@ export const defaultFormikValues: ITaskDefaultValues = {
   plannedDueDate: undefined,
   planedStartDate: undefined,
   progress: 0,
-  desc: '<p>Tell me what this task about 🤡</p>'
+  desc: ''
 }
 
 export interface ITaskDefaultValues {
@@ -269,7 +270,7 @@ export default function TaskDetail({
                     formik.setFieldValue('startDate', d)
                   }}
                 />
-                <span className={formik.values.startDate ? '' : 'text-gray-400'}>→</span>
+                <HiArrowLongRight className={`w-5 h-5 ${formik.values.startDate ? '' : 'text-gray-400'}`} />
                 <DatePicker
                   enableTimer={true}
                   placeholder="Due"
