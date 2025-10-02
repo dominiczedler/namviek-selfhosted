@@ -47,10 +47,10 @@ export const defaultFormikValues: ITaskDefaultValues = {
   fileIds: [],
   taskStatusId: '',
   priority: TaskPriority.LOW,
-  startDate: new Date(),
-  dueDate: new Date(),
-  plannedDueDate: new Date(),
-  planedStartDate: new Date(),
+  startDate: undefined,
+  dueDate: undefined,
+  plannedDueDate: undefined,
+  planedStartDate: undefined,
   progress: 0,
   desc: '<p>Tell me what this task about 🤡</p>'
 }
@@ -63,10 +63,10 @@ export interface ITaskDefaultValues {
   fileIds: string[]
   taskStatusId: string
   priority: TaskPriority
-  startDate: Date
-  dueDate: Date
-  plannedDueDate: Date
-  planedStartDate: Date
+  startDate: Date | undefined
+  dueDate: Date | undefined
+  plannedDueDate: Date | undefined
+  planedStartDate: Date | undefined
   desc: string
   progress: number
 }
@@ -257,30 +257,28 @@ export default function TaskDetail({
           </div>
           <div className="task-info-item">
             <div className="task-info-label">
-              <HiOutlineClock /> <span>Start date</span>
+              <HiOutlineCalendar /> <span>Dates</span>
             </div>
             <div className="task-info-content">
-              <DatePicker
-                enableTimer={true}
-                value={formik.values.startDate}
-                onChange={d => {
-                  formik.setFieldValue('startDate', d)
-                }}
-              />
-            </div>
-          </div>
-          <div className="task-info-item">
-            <div className="task-info-label">
-              <HiOutlineClock /> <span>Due date</span>
-            </div>
-            <div className="task-info-content">
-              <DatePicker
-                enableTimer={true}
-                value={formik.values.dueDate}
-                onChange={d => {
-                  formik.setFieldValue('dueDate', d)
-                }}
-              />
+              <div className="flex items-center gap-2">
+                <DatePicker
+                  enableTimer={true}
+                  placeholder="Start"
+                  value={formik.values.startDate}
+                  onChange={d => {
+                    formik.setFieldValue('startDate', d)
+                  }}
+                />
+                <span className={formik.values.startDate ? '' : 'text-gray-400'}>→</span>
+                <DatePicker
+                  enableTimer={true}
+                  placeholder="Due"
+                  value={formik.values.dueDate}
+                  onChange={d => {
+                    formik.setFieldValue('dueDate', d)
+                  }}
+                />
+              </div>
             </div>
           </div>
           {/* <div className="task-info-item"> */}

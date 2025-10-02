@@ -22,10 +22,10 @@ export const defaultFormikValues: ITaskDefaultValues = {
   fileIds: [],
   taskStatusId: '',
   priority: TaskPriority.LOW,
-  startDate: new Date('1991-1-10 08:00'),
-  dueDate: new Date(),
-  plannedDueDate: new Date(),
-  planedStartDate: new Date(),
+  startDate: undefined,
+  dueDate: undefined,
+  plannedDueDate: undefined,
+  planedStartDate: undefined,
   progress: 0,
   desc: '<p>Tell me what this task about 🤡</p>'
 }
@@ -38,10 +38,10 @@ export interface ITaskDefaultValues {
   fileIds: string[]
   taskStatusId: string
   priority: TaskPriority
-  startDate: Date
-  dueDate: Date
-  plannedDueDate: Date
-  planedStartDate: Date
+  startDate: Date | undefined
+  dueDate: Date | undefined
+  plannedDueDate: Date | undefined
+  planedStartDate: Date | undefined
   desc: string
   progress: number
 }
