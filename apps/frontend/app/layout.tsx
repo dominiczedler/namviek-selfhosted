@@ -2,7 +2,7 @@
 import './global.css'
 import './darkmode.css'
 import './style/index.css'
-import { Inter } from 'next/font/google'
+import localFont from 'next/font/local'
 import RootLayoutComp from '../layouts/RootLayout'
 import { GoalieProvider } from '@auth-client'
 
@@ -10,7 +10,31 @@ import dynamic from 'next/dynamic'
 import GoogleAnalytics from './_components/GA'
 import { CSPostHogProvider } from './providers'
 
-const inter = Inter({ subsets: ['latin'] })
+const inter = localFont({
+  src: [
+    {
+      path: './fonts/Inter-Regular.woff2',
+      weight: '400',
+      style: 'normal',
+    },
+    {
+      path: './fonts/Inter-Medium.woff2',
+      weight: '500',
+      style: 'normal',
+    },
+    {
+      path: './fonts/Inter-SemiBold.woff2',
+      weight: '600',
+      style: 'normal',
+    },
+    {
+      path: './fonts/Inter-Bold.woff2',
+      weight: '700',
+      style: 'normal',
+    },
+  ],
+  variable: '--font-inter',
+})
 
 const PostHogPageView = dynamic(() => import('./PostHogPageView'), {
   ssr: false,
