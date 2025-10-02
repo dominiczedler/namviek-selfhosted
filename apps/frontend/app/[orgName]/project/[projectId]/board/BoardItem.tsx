@@ -14,6 +14,7 @@ import TaskDate from '../views/TaskDate'
 import TaskAssignee from '../views/TaskAssignee'
 import TaskCheckbox from '@/components/TaskCheckbox'
 import { GoTasklist } from 'react-icons/go'
+import { HiListBullet } from 'react-icons/hi2'
 import TaskChecklist from '@/features/TaskChecklist'
 import { useMemo } from 'react'
 import { pushState } from 'apps/frontend/libs/pushState'
@@ -91,26 +92,6 @@ export default function BoardItem({ data }: { data: ExtendedTask }) {
 
       <div className="board-item-action">
         <div className="flex items-center gap-2">
-          <Popover
-            triggerBy={
-              <div>
-                {progress > 0 && progress < 100 ? (
-                  <Tooltip title={`Checklist progress`}>
-                    <div className="p-0.5 w-5 h-5 cursor-pointer border dark:border-gray-700 rounded-full text-[10px] text-center animate-pulse">
-                      {progress}
-                    </div>
-                  </Tooltip>
-                ) : (
-                  <GoTasklist className="p-0.5 w-5 h-5 cursor-pointer border dark:border-gray-700 rounded-full" />
-                )}
-              </div>
-            }
-            content={
-              <div className="px-4 pt-4 pb-1 border bg-white dark:bg-gray-900 dark:border-gray-700 rounded-md w-[300px]">
-                <TaskChecklist taskId={data.id} />
-              </div>
-            }
-          />
           <TimerButton
             taskId={data.id}
             taskName={data.title}
@@ -125,6 +106,23 @@ export default function BoardItem({ data }: { data: ExtendedTask }) {
         </div>
         <TaskCheckbox id={data.id} selected={data.selected} />
       </div>
+
+      {(data.checklistDone || data.checklistTodos) ? (
+        <Popover
+          triggerBy={
+            <div className="flex items-center gap-1.5 text-xs text-gray-500 dark:text-gray-400 cursor-pointer hover:text-gray-700 dark:hover:text-gray-300 mt-2">
+              <HiListBullet className="w-3.5 h-3.5" />
+              <span>{(data.checklistDone || 0) + (data.checklistTodos || 0)} subtasks</span>
+            </div>
+          }
+          content={
+            <div className="px-4 pt-4 pb-1 border bg-white dark:bg-gray-900 dark:border-gray-700 rounded-md w-[300px]">
+              <TaskChecklist taskId={data.id} />
+            </div>
+          }
+        />
+      ) : null}
+
       {progress ? (
         <div className="absolute bottom-0 left-0 w-full rounded-b-md overflow-hidden">
           <div

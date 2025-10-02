@@ -52,6 +52,6 @@ export default function ChecklistAdd({ taskId }: { taskId: string }) {
         ev.preventDefault()
       }
 
-    }} placeholder="Create new checklist" />
+    }} placeholder="Create new sub task" />
   </div>
 }
