@@ -1,7 +1,8 @@
 import {
   Dashboard,
   DashboardComponent,
-  DashboardComponentType
+  DashboardComponentType,
+  Prisma
 } from '@prisma/client'
 import { dboardComponentModal, dboardModel, taskModel } from './_prisma'
 
@@ -31,7 +32,7 @@ export const mdDboardGetDefault = async (projectId: string) => {
 
 export const mdDBoardCreate = async (data: Omit<Dashboard, 'id'>) => {
   return dboardModel.create({
-    data
+    data: data as Prisma.DashboardCreateInput
   })
 }
 
@@ -39,7 +40,7 @@ export const mdDBoardAddComponent = async (
   data: Omit<DashboardComponent, 'id'>
 ) => {
   return dboardComponentModal.create({
-    data
+    data: data as Prisma.DashboardComponentCreateInput
   })
 }
 

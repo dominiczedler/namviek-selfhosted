@@ -99,6 +99,6 @@ export const mdOrgMemberGet = async (orgId: string | string[]) => {
 
 export const mdOrgMemberAdd = async (data: Omit<OrganizationMembers, 'id'>) => {
   return orgMemberModel.create({
-    data
+    data: data as any
   })
 }

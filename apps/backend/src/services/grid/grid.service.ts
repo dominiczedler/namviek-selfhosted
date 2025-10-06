@@ -148,23 +148,21 @@ export default class GridService {
       const { limit = 50, cursor, page = 1 } = pagination
       const safeLimit = Math.min(limit, 100)
 
-      // Get total count for pagination info
-      const countQuery = this.buildQueryFilter(projectId, filter)
-      let countResults = await pmClient.grid.findRaw({
-        filter: countQuery
-      })
-      const totalCount = Array.isArray(countResults) ? countResults.length : 0
-      countResults = null
-
-      // Build and execute query
-      const query = this.buildQueryFilter(projectId, filter, cursor)
-      console.log('query', JSON.stringify(query, null, ' '))
-      const results = await pmClient.grid.findRaw({
-        filter: query,
-        options: {
-          limit: safeLimit + 1,
-          sort: { _id: -1 },
+      // Get total count for pagination info (PostgreSQL compatible)
+      const totalCount = await pmClient.grid.count({
+        where: {
+          projectId
         }
+      })
+
+      // Build and execute query (PostgreSQL compatible)
+      const results = await pmClient.grid.findMany({
+        where: {
+          projectId,
+          ...(cursor ? { id: { lt: cursor } } : {})
+        },
+        orderBy: { id: 'desc' },
+        take: safeLimit + 1
       })
 
       // Process results

@@ -16,7 +16,7 @@ export const mdUserFindFirst = async (cond: { id: string }) => {
 
 export const mdUserAdd = async (data: Omit<User, 'id'>) => {
   return userModel.create({
-    data: data
+    data: data as any
   })
 }
 
@@ -46,7 +46,7 @@ export const mdUserUpdate = async (
 ) => {
   return userModel.update({
     where: { id },
-    data
+    data: data as any
   })
 }
 

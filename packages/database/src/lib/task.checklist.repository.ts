@@ -29,7 +29,7 @@ export class TaskChecklistRepository {
   async create(data: Omit<TaskChecklist, 'id'>) {
 
     return this.model.create({
-      data
+      data: data as any
     })
   }
 
@@ -38,7 +38,7 @@ export class TaskChecklistRepository {
       where: {
         id
       },
-      data
+      data: data as any
     })
   }
 

@@ -3,7 +3,7 @@ import { favModel } from './_prisma'
 
 export const mdFavAdd = (data: Omit<Favorites, 'id'>) => {
   return favModel.create({
-    data
+    data: data as any
   })
 }
 
@@ -30,6 +30,6 @@ export const mdFavUpdate = (id: string, data: Partial<Favorites>) => {
     where: {
       id
     },
-    data: data
+    data: data as any
   })
 }

@@ -5,14 +5,14 @@ const mdApp = pmClient.application
 export class ApplicationRepository {
   async create(data: Omit<Application, 'id'>) {
     return mdApp.create({
-      data
+      data: data as any
     })
   }
 
   async update(id: string, data: Partial<Application>) {
     return mdApp.update({
       where: { id },
-      data
+      data: data as any
     })
   }
 

@@ -36,7 +36,7 @@ export const mdTaskPointAddMany = async (
   data: Pick<TaskPoint, 'point' | 'projectId' | 'icon'>[]
 ) => {
   return taskPointModel.createMany({
-    data
+    data: data as any
   })
 }
 
@@ -44,7 +44,7 @@ export const mdTaskPointAddOne = async (
   data: Pick<TaskPoint, 'point' | 'projectId' | 'icon'>
 ) => {
   return taskPointModel.create({
-    data: data
+    data: data as any
   })
 }
 

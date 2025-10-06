@@ -3,7 +3,7 @@ import { fileStorageModel } from './_prisma'
 
 export const mdStorageAdd = async (data: Omit<FileStorage, 'id'>) => {
   return fileStorageModel.create({
-    data
+    data: data as any
   })
 }
 

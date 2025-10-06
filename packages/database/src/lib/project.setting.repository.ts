@@ -65,18 +65,18 @@ export class ProjectSettingRepository {
         where: {
           id: myNotifySetting.id
         },
-        data
+        data: data as any
       })
     } else {
       return projectNotifyModel.create({
-        data
+        data: data as any
       })
     }
   }
 
   async createNotifySetting(data: Omit<ProjectSettingNotification, 'id'>) {
     return projectNotifyModel.create({
-      data
+      data: data as any
     })
   }
 }

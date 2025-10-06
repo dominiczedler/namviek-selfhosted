@@ -40,7 +40,7 @@ export const mdOrgGetOwned = async (uid: string) => {
 
 export const mdOrgAdd = async (data: Omit<Organization, 'id'>) => {
   return orgModel.create({
-    data: data
+    data: data as any
   });
 };
 
@@ -64,13 +64,13 @@ export const mdOrgMemGetByUid = async (uid: string) => {
 
 export const mdOrgMemAdd = async (data: Omit<OrganizationMembers, 'id'>) => {
   return orgMemberModel.create({
-    data
+    data: data as any
   });
 };
 
 export const mdOrgMemAddMany = async (data: Omit<OrganizationMembers, 'id'>[]) => {
   return orgMemberModel.createMany({
-    data: data
+    data: data as any
   });
 };
 

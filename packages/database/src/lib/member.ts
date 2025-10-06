@@ -42,7 +42,7 @@ export const mdMemberUpdateRole = async ({
 
 export const mdMemberAdd = async (data: Omit<Members, 'id'>) => {
   return memberModel.create({
-    data: data
+    data: data as any
   })
 }
 
@@ -57,7 +57,7 @@ export const mdMemberDel = async (uid: string, projectId: string) => {
 
 export const mdMemberAddMany = async (data: CustomMember[]) => {
   return memberModel.createMany({
-    data
+    data: data as any
   })
 }
 

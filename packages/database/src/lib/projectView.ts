@@ -12,17 +12,12 @@ export const mdProjectView = {
         // ]
         OR: [
           // condition 1
-          // get all project's view
+          // get all project's view (onlyMe is null or false)
           {
-            projectId, OR: [
-              {
-                onlyMe: {
-                  isSet: false
-                }
-              },
-              {
-                onlyMe: false
-              }
+            projectId,
+            OR: [
+              { onlyMe: null },
+              { onlyMe: false }
             ]
           },
 
@@ -49,7 +44,7 @@ export const mdProjectView = {
 
   add: (data: Omit<ProjectView, 'id'>) => {
     return projectViewModel.create({
-      data
+      data: data as any
     })
   },
 
@@ -58,7 +53,7 @@ export const mdProjectView = {
       where: {
         id
       },
-      data
+      data: data as any
     })
   },
 

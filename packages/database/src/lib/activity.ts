@@ -1,15 +1,15 @@
-import { Activity, ActivityObjectType } from '@prisma/client'
+import { Activity, ActivityObjectType, Prisma } from '@prisma/client'
 import { activityModel } from './_prisma'
 
 export const mdActivityAdd = (data: Omit<Activity, 'id'>) => {
   return activityModel.create({
-    data
+    data: data as Prisma.ActivityCreateInput
   })
 }
 
 export const mdActivityAddMany = (data: Omit<Activity, 'id'>[]) => {
   return activityModel.createMany({
-    data
+    data: data as Prisma.ActivityCreateManyInput[]
   })
 }
 
@@ -26,7 +26,7 @@ export const mdActivityUpdate = (id: string, data: Omit<Activity, 'id'>) => {
     where: {
       id
     },
-    data: data
+    data: data as Prisma.ActivityUpdateInput
   })
 }
 

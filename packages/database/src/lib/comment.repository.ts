@@ -5,13 +5,13 @@ const mdComment = pmClient.comment
 export class CommentRepository {
   async mdCommentAdd(data: Omit<Comment, 'id'>) {
     return mdComment.create({
-      data
+      data: data as any
     })
   }
 
   async mdCommentAddMany(data: Omit<Comment, 'id'>[]) {
     return mdComment.createMany({
-      data
+      data: data as any
     })
   }
 
@@ -28,7 +28,7 @@ export class CommentRepository {
       where: {
         id
       },
-      data: data
+      data: data as any
     })
   }
 

@@ -20,25 +20,21 @@ services:
     networks:
       - namviek-network
 
-  mongodb:
-    image: 'mongo:latest'
-    command: ['--replSet', 'rs0', '--bind_ip_all', '--port', '27017']
+  postgres:
+    image: 'postgres:16-alpine'
     ports:
-      - '27017:27017'
-    extra_hosts:
-      - 'host.docker.internal:host-gateway'
-    healthcheck:
-      test: echo "try { rs.status() } catch (err) { rs.initiate({_id:'rs0',members:[{_id:0,host:'host.docker.internal:27017'}]}) }" | mongosh --port 27017 --quiet
-      interval: 5s
-      timeout: 30s
-      start_period: 0s
-      start_interval: 1s
-      retries: 30
+      - '5432:5432'
     environment:
-      - MONGO_INITDB_DATABASE=namviek
+      - POSTGRES_USER=namviek
+      - POSTGRES_PASSWORD=namviek_password
+      - POSTGRES_DB=namviek
     volumes:
-      - mongodb-data:/data/db
-      - mongodb-config:/data/configdb
+      - postgres-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U namviek"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
     networks:
       - namviek-network
 
@@ -53,7 +49,7 @@ services:
       - .env
     environment:
       - REDIS_HOST=redis:6379
-      - MONGODB_URL=mongodb://mongodb:27017/namviek?replicaSet=rs0&authSource=admin&directConnection=true
+      - DATABASE_URL=postgresql://namviek:namviek_password@postgres:5432/namviek?schema=public
       - AWS_MINIO_ENDPOINT=http://localhost:9000
     ports:
       - '3333:3000'
@@ -65,7 +61,7 @@ services:
       retries: 5
       start_period: 30s
     depends_on:
-      - mongodb
+      - postgres
       - redis
       - storage
     networks:
@@ -86,9 +82,8 @@ services:
       - namviek-network
 
 volumes:
-  mongodb-data:
+  postgres-data:
   minio-data:
-  mongodb-config:
 
 networks:
   namviek-network:

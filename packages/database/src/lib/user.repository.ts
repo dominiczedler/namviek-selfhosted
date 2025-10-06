@@ -27,7 +27,7 @@ export class UserRepository {
    */
   async create(data: Omit<User, 'id' | 'createdAt' | 'updatedAt'>) {
     return mdUser.create({
-      data
+      data: data as any
     })
   }
 
@@ -37,7 +37,7 @@ export class UserRepository {
   async update(id: string, data: Partial<User>) {
     return mdUser.update({
       where: { id },
-      data
+      data: data as any
     })
   }
 

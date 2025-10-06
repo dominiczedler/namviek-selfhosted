@@ -262,13 +262,13 @@ export const mdTaskCounter = () => {
 
 export const mdTaskAdd = async (data: Omit<Task, 'id'>) => {
   return taskModel.create({
-    data
+    data: data as any
   })
 }
 
 export const mdTaskAddMany = async (data: Omit<Task, 'id'>[]) => {
   return taskModel.createMany({
-    data
+    data: data as any
   })
   // return pmClient.$transaction(
   //   data.map(task => taskModel.create({ data: task }))
@@ -281,7 +281,7 @@ export const mdTaskUpdateMany = async (ids: string[], data: Partial<Task>) => {
     where: {
       id: { in: ids }
     },
-    data: rest
+    data: rest as any
   })
 }
 
@@ -291,6 +291,6 @@ export const mdTaskUpdate = async (data: Partial<Task>) => {
     where: {
       id
     },
-    data: rest
+    data: rest as any
   })
 }

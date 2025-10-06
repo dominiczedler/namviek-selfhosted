@@ -49,7 +49,7 @@ export const mdVisionGetByOrg = async (organizationId: string) => {
 
 export const mdVisionAdd = async (data: Omit<Vision, 'id'>) => {
   return visionModel.create({
-    data
+    data: data as any
   })
 }
 
@@ -72,6 +72,6 @@ export const mdVisionUpdate = async ({
     where: {
       id
     },
-    data
+    data: data as any
   })
 }

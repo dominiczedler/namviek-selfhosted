@@ -6,14 +6,14 @@ const mdTimer = pmClient.timer
 export class TimerRepository {
   async create(data: Omit<Timer, 'id' | 'createdAt' | 'updatedAt'>) {
     return mdTimer.create({
-      data
+      data: data as any
     })
   }
 
   async update(id: string, data: Partial<Timer>) {
     return mdTimer.update({
       where: { id },
-      data
+      data: data as any
     })
   }
 

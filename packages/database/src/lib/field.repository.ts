@@ -24,7 +24,7 @@ export class FieldRepository {
   async create(data: Omit<Field, 'id'>) {
 
     return fieldModel.create({
-      data
+      data: data as any
     })
   }
 
@@ -32,7 +32,7 @@ export class FieldRepository {
     const { id, ...restData } = data
     return fieldModel.update({
       where: { id: fieldId },
-      data: restData
+      data: restData as any
     })
   }
 

@@ -96,6 +96,6 @@ export const mdTaskStatusDel = async (id: string) => {
 
 export const mdTaskStatusAddMany = async (data: Omit<TaskStatus, 'id'>[]) => {
   return taskStatusModel.createMany({
-    data: data
+    data: data as any
   })
 }
