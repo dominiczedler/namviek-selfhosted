@@ -1,5 +1,5 @@
 import { mdUserFindEmail, mdUserFindFirst } from '@database'
-import { CKEY, hgetAll, hset } from '../lib/redis'
+import { CKEY, hgetAll, hset, delCache } from '../lib/redis'
 
 export const serviceGetUserById = async (id: string) => {
   try {
@@ -43,5 +43,17 @@ export const serviceGetUserByEmail = async (email: string) => {
   } catch (error) {
     console.log('service get user by id error', error)
     return null
+  }
+}
+
+export const invalidateUserCache = async (userId: string, email?: string) => {
+  try {
+    await delCache([CKEY.USER, userId])
+    if (email) {
+      await delCache([CKEY.USER, email])
+    }
+    console.log('User cache invalidated for:', userId)
+  } catch (error) {
+    console.log('Error invalidating user cache:', error)
   }
 }

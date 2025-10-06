@@ -16,6 +16,7 @@ import GoogleAuthProvider from '../../providers/auth/GoogleAuthProvider'
 import { isDevMode, isEmailVerificationEnabled } from '../../lib/utils'
 import { sendDiscordLog } from '../../lib/log'
 import { authMiddleware } from '../../middlewares'
+import { invalidateUserCache } from '../../services/user'
 
 const mainRouter = Router()
 const router = Router()
@@ -207,6 +208,7 @@ router.get('/verify', async (req, res) => {
       })
     } else {
       await mdUserUpdate(user.id, { status: UserStatus.ACTIVE })
+      await invalidateUserCache(user.id, user.email)
       res.json({
         status: 200,
         message: 'Congratulations! Your Account is Now Active.'

@@ -8,6 +8,7 @@ import {
   Post,
   Body
 } from '../../core'
+import { invalidateUserCache } from '../../services/user'
 
 interface ForgotPasswordBody {
   email: string
@@ -154,6 +155,9 @@ export default class PasswordController extends BaseController {
         resetToken: null
       })
       console.log('[Reset Password] Password updated and reset token cleared for user:', user.id)
+
+      // Invalidate user cache to force fresh DB lookup
+      await invalidateUserCache(user.id, user.email)
 
       return {
         status: 200,

@@ -2,6 +2,8 @@ import { NextFunction, Response } from 'express';
 import { decodeToken, extractToken, generateRefreshToken, generateToken, verifyRefreshToken } from '../lib/jwt';
 import { AuthRequest, JWTPayload, JWTType } from '../types';
 import { pmClient } from 'packages/database/src/lib/_prisma';
+import { serviceGetUserById } from '../services/user';
+import { UserStatus } from '@prisma/client';
 
 export const authMiddleware = async (req: AuthRequest, res: Response, next: NextFunction) => {
   const headers = req.headers;
@@ -58,8 +60,22 @@ export const authMiddleware = async (req: AuthRequest, res: Response, next: Next
     if (validRefreshToken) {
       console.log('token is invalid, but refresh token is valid');
       console.log('re-generate new token vs refresh token');
-      const user = decodeToken(authorization) as JWTPayload;
-      console.log('user infor', user);
+      const decoded = decodeToken(authorization) as JWTPayload;
+      console.log('user infor', decoded);
+
+      // Security fix: Verify user still exists and is active in database
+      const user = await serviceGetUserById(decoded.id);
+
+      if (!user) {
+        console.log('User no longer exists in database');
+        return res.status(401).json({ error: 'User not found' });
+      }
+
+      if (user.status !== UserStatus.ACTIVE) {
+        console.log('User account is inactive');
+        return res.status(403).json({ error: 'Account inactive' });
+      }
+
       const token = generateToken({
         id: user.id,
         email: user.email,
@@ -79,7 +95,13 @@ export const authMiddleware = async (req: AuthRequest, res: Response, next: Next
 
       console.log('genereated succesfully');
 
-      req.authen = { ...user, type: JWTType.USER };
+      req.authen = {
+        id: user.id,
+        email: user.email,
+        name: user.name,
+        photo: user.photo,
+        type: JWTType.USER
+      };
       return next();
     }
 
