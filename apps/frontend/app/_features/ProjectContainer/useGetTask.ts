@@ -100,22 +100,9 @@ export const useGetTaskHandler = () => {
 }
 
 function useFillTaskFromCache() {
-  const { projectId } = useParams()
-  const { addAllTasks } = useTaskStore()
-  const key = `TASKLIST_${projectId}`
-
-  useEffect(() => {
-    localforage
-      .getItem(key)
-      .then(val => {
-        if (val) {
-          addAllTasks(val as ExtendedTask[])
-        }
-      })
-      .catch(err => {
-        console.log('errpr loading cached task', err)
-      })
-  }, [projectId])
+  // Cache loading is now handled in fetchNCache
+  // This function is no longer needed but kept for backwards compatibility
+  // Tasks will be loaded from server first, then cached
 }
 
 export default function useGetTask() {

@@ -11,15 +11,30 @@ export default function Signout() {
   const posthog = usePostHog()
 
   useEffect(() => {
+    const clearAllData = async () => {
+      try {
+        // Clear IndexedDB (localforage)
+        await localforage.clear()
+
+        // Clear all localStorage
+        localStorage.clear()
+
+        // Clear all sessionStorage
+        sessionStorage.clear()
+
+        // Reset PostHog
+        posthog.reset()
+
+        console.log('All caches cleared')
+      } catch (error) {
+        console.error('Error clearing caches:', error)
+      } finally {
+        push('/sign-in')
+      }
+    }
+
     setTimeout(() => {
-      console.log('clear cache token')
-      localforage.clear()
-      clearAllGoalieToken()
-      console.log('clear goalie user info')
-      clearGoalieUser()
-      console.log('redirecting to /sign-in ...')
-      posthog.reset()
-      push('/sign-in')
+      clearAllData()
     }, 500)
   }, [])
   return (

@@ -28,32 +28,38 @@ export const useServiceProject = () => {
     if (!orgId) return
 
     const keyList = `PROJECT_LIST_${orgId}`
-    localForage
-      .getItem(keyList)
-      .then(val => {
-        if (val) {
-          addAllProject(val as Project[])
-        }
-      })
-      .catch(err => {
-        console.log('error get item', err)
-      })
 
+    // Fetch from server first (ensures fresh data and validates session)
     projectGet({
       orgId,
       isArchive: false
     }).then(result => {
       const { data, status } = result.data
 
-      if (status !== 200) return
+      if (status !== 200) {
+        // Clear cache on error
+        localForage.removeItem(keyList)
+        return
+      }
 
       setLoading(false)
       addAllProject(data)
 
+      // Cache after successful fetch
       localForage.setItem(keyList, data)
-
-      // setLocalJSONCache(keyList, data)
-      // setIDBItem(keyList, data)
+    }).catch(err => {
+      console.error('Error fetching projects:', err)
+      // Try to load from cache only if network request fails
+      localForage
+        .getItem(keyList)
+        .then(val => {
+          if (val) {
+            addAllProject(val as Project[])
+          }
+        })
+        .catch(cacheErr => {
+          console.log('error loading cached projects', cacheErr)
+        })
     })
   }, [orgId])
 }

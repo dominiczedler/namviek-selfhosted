@@ -48,24 +48,40 @@ instance.interceptors.response.use(
     }
     return config
   },
-  function(error) {
+  async function(error) {
     const { response } = error
-    if (response && response.status === 440) {
-      if (isSessionExpired()) {
-        messageError('Your session is expired. Please login again !')
+
+    // Clear all caches on authentication errors
+    const clearAllCaches = async () => {
+      try {
+        const localforage = (await import('localforage')).default
+        await localforage.clear()
+        localStorage.clear()
+        sessionStorage.clear()
+        console.log('All caches cleared due to auth error')
+      } catch (err) {
+        console.error('Error clearing caches:', err)
+      }
+    }
+
+    // Handle authentication errors (401, 403, 440)
+    if (response && [401, 403, 440].includes(response.status)) {
+      await clearAllCaches()
+
+      if (response.status === 440 || isSessionExpired()) {
+        messageError('Your session is expired. Please login again!')
         clearAllGoalieToken()
         window.location.href = '/sign-in'
         return
       }
 
-      // window.location.href = '/sign-out';
-
-      // console.log('href', pathname)
-      // if (pathname.includes('/sign-in') || pathname.includes('/sign-up')) {
-      //   return;
-      // }
-      // window.location.href = `/sign-in?redirectUrl=${window.location.pathname}`;
+      // For 401/403, redirect to sign-in
+      messageError('Authentication failed. Please login again.')
+      clearAllGoalieToken()
+      window.location.href = '/sign-in'
+      return
     }
+
     console.log('ERRIRIRIR', response)
     return Promise.reject(error)
   }
